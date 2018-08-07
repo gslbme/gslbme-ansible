@@ -1,0 +1,31 @@
+- name: GSLB.me Ansible orchestration
+  hosts: localhost
+  
+  vars:
+
+  tasks:
+  
+    - name: Create zone
+      gslbme_zone:
+        gslbme_username: "{{ gslbme_username }}"
+        gslbme_password: "{{ gslbme_password }}"
+        zonename: "{{ zone_name }}"
+        enabled: true
+        vanitydns: false
+        contactemail: "admin-new@zone99.com"
+        ttl: 7200
+        state: present
+      register: output
+    - name: Dumps output
+      debug:
+        msg: '{{ output }}'
+  
+    - name: Create zone using with_items
+      gslbme_zone: zonename={{ item.zonename }} enabled={{ item.enabled }} vanitydns={{ item.vanitydns }} contactemail={{ item.contactemail }} ttl={{ item.ttl }} state={{ item.state }} gslbme_username={{ gslbme_username }} gslbme_password={{ gslbme_password }}
+      with_items:
+        - { zonename: 'zone1.com', enabled: true, vanitydns: false, contactemail: admin@zone1.com, ttl: 3600, state: present }
+        - { zonename: 'zone2.com', enabled: false, vanitydns: true, contactemail: admin@zone2.com, ttl: 7200, state: present }
+      register: output
+    - name: Dumps output
+      debug:
+        msg: '{{ output }}'

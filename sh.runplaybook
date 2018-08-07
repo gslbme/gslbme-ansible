@@ -1,0 +1,17 @@
+#!/bin/bash
+
+case $1 in
+	'zone')
+		ansible-playbook --extra-vars="{'gslbme_username':'MYUSERNAME','gslbme_password':'MYPASSWORD','zone_name':'zone99.com'}" gslbme-playbook-zone.yml
+		;;
+	'records')
+		ansible-playbook --extra-vars="{'gslbme_username':'MYUSERNAME','gslbme_password':'MYPASSWORD','zone_name':'zone99.com'}" gslbme-playbook-records.yml
+		;;
+	'full')
+		ansible-playbook --extra-vars="{'gslbme_username':'MYUSERNAME','gslbme_password':'MYPASSWORD','zone_name':'fullzone.com'}" gslbme-playbook-fullzone.yml
+		;;
+	*)
+		echo "$0 [zone|records|full]"
+		exit
+		;;
+esac 

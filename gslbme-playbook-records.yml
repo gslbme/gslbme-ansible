@@ -1,0 +1,34 @@
+- name: GSLB.me Ansible orchestration
+  hosts: localhost
+  
+  vars:
+
+  tasks:
+  
+    - name: Create records
+      gslbme_record:
+        gslbme_username: "{{ gslbme_username }}"
+        gslbme_password: "{{ gslbme_password }}"
+        zonename: "{{ zone_name }}"
+        name: 'dummy-cname'
+        type: 'CNAME'
+        value: 'my.dummy.cname'
+        ttl: 321
+        state: present
+      register: output
+    - name: Dumps output
+      debug:
+        msg: '{{ output }}'
+        
+    - name: Create records using with_items
+      gslbme_record: gslbme_username={{ gslbme_username }} gslbme_password={{ gslbme_password }} zonename={{ zone_name }}  name={{ item.name }} type={{ item.type }} value={{ item.value }} ttl={{ item.ttl }} state={{ item.state }}
+      with_items:
+        - { name: 'record1', type: 'A', value: '212.0.0.1', ttl: '600', state: present }
+        - { name: 'record2', type: 'A', value: '212.0.0.2', ttl: '600', state: present }
+        - { name: 'record3', type: 'A', value: '212.0.0.3', ttl: '600', state: present }
+        - { name: 'record4', type: 'A', value: '212.0.0.4', ttl: '600', state: present }
+        - { name: 'record5', type: 'A', value: '212.0.0.5', ttl: '600', state: present }
+      register: output
+    - name: Dumps output
+      debug:
+        msg: '{{ output }}'

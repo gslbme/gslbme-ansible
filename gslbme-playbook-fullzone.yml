@@ -1,0 +1,47 @@
+- name: GSLB.me Ansible orchestration
+  hosts: localhost
+  
+  vars:
+
+  tasks:
+  
+    - name: Create zone
+      gslbme_zone:
+        gslbme_username: "{{ gslbme_username }}"
+        gslbme_password: "{{ gslbme_password }}"
+        zonename: "{{ zone_name }}"
+        enabled: true
+        vanitydns: false
+        contactemail: "hostmaster@{{ zone_name }}"
+        ttl: 7200
+        state: present
+      register: output
+    - name: Dumps output
+      debug:
+        msg: '{{ output }}'
+  
+    - name: Create zone records
+      gslbme_record: gslbme_username={{ gslbme_username }} gslbme_password={{ gslbme_password }} zonename={{ zone_name }}  name={{ item.name }} type={{ item.type }} value={{ item.value }} ttl={{ item.ttl }} state={{ item.state }}
+      with_items:
+        - { name: 'record1', type: 'A', value: '212.0.0.1', ttl: '600', state: present }
+        - { name: 'record2', type: 'A', value: '212.0.0.2', ttl: '600', state: present }
+        - { name: 'record3', type: 'A', value: '212.0.0.3', ttl: '600', state: present }
+        - { name: 'record4', type: 'A', value: '212.0.0.4', ttl: '600', state: present }
+        - { name: 'record5', type: 'A', value: '212.0.0.5', ttl: '600', state: present }
+        - { name: 'record6', type: 'CNAME', value: 'www.google.com.', ttl: '30', state: absent }
+        - { name: 'record7', type: 'TXT', value: 'this is a test', ttl: '600', state: present }
+        - { name: 'record8', type: 'MX', value: '10 mail', ttl: '600', state: present }
+        - { name: 'mail', type: 'A', value: '11.22.33.44', ttl: '600', state: present }
+      register: output
+    - name: Dumps output
+      debug:
+        msg: '{{ output }}'
+
+    - name: Commit zone changes
+      gslbme_zone_commit:
+        gslbme_username: "{{ gslbme_username }}"
+        gslbme_password: "{{ gslbme_password }}"
+        zonename: "{{ zone_name }}"
+    - name: Dumps output
+      debug:
+        msg: '{{ output }}'
